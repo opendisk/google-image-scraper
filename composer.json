@@ -1,0 +1,24 @@
+{
+    "name": "opendisk/google-image-scraper",
+    "description": "Scrap images from Google Search Engine",
+    "keywords": ["Google Image", "Image Scraper", "Web Scraping"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rusmadi",
+            "email": "git@rusmadi.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4|^8.0",
+        "rappasoft/laravel-helpers": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Opendisk\\WebScraper\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
