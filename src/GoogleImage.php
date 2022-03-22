@@ -70,7 +70,7 @@ class GoogleImage
                 $result["keyword"]	= $keyword;
                 $result["slug"]		= str_slug($keyword);
                 $result["title"]	= isset($data[13]) ? ucwords(str_slug($data[13], " ")) : "";
-                $result["alt"]		= isset($data[19]) ? str_slug($data[19], " "]) : "";
+                $result["alt"]		= isset($data[19]) ? str_slug($data[19], " ") : "";
                 $result["url"]		= $data[8];
                 $result["thumb"]	= str_replace('&usqp=CAU', '', $data[4]);
                 $result["filetype"] = self::getFileType($data[8]);
