@@ -4,15 +4,9 @@ namespace Opendisk\WebScraper;
 
 class GoogleImage
 {
-	public static function get($keyword, $proxy, $options = [])
+	public static function get($keyword, $proxy = "", $options = [])
 	{
-		$opts = '';
-		
-		foreach ($options as $key => $value) {
-			$opts .= "&$key=$value";
-		}
-
-		$url = "https://www.google.com/search?q=" . urlencode($keyword) . $opts . "&tbm=isch&hl=en-US&sa=X&biw=500&bih=500";
+		$url = "https://www.google.com/search?q=" . urlencode($keyword) . "&source=lnms&tbm=isch&hl=en-US&sa=X&biw=500&bih=500";
 
 		$uags = [
 			"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.82 Safari/537.36",
@@ -26,7 +20,7 @@ class GoogleImage
             $proxy = "tcp://$proxy";
         }
 
-        $params = [
+        $options = [
             "http" => [
                 "method" => "GET",
                 "proxy" => "$proxy",
@@ -38,7 +32,7 @@ class GoogleImage
             ],
         ];
 
-        $context = stream_context_create($params);
+        $context = stream_context_create($options);
 
         $response = file_get_contents($url, false, $context);
 
@@ -50,9 +44,15 @@ class GoogleImage
         $rawResults = [];
         $results = [];
 
-        if (isset($data[31][0][12][2])) {
-            $rawResults = $data[31][0][12][2];
-        }
+        if (!empty($data[31])) {
+			if (isset($data[31][0][12][2])) {
+            	$rawResults = $data[31][0][12][2];
+        	}
+		} else {
+			if (isset($data[56][1][0][0][1][0])) {
+                $rawResults = $data[56][1][0][0][1][0];
+            }
+		}
 
         foreach ($rawResults as $rawResult) {
         	if (count($results) >= 50) {
@@ -69,8 +69,8 @@ class GoogleImage
             if (count($data) >= 11) {
                 $result["keyword"]	= $keyword;
                 $result["slug"]		= str_slug($keyword);
-                $result["title"]	= isset($data[13]) ? ucwords(str_slug($data[13], " ")) : "";
-                $result["alt"]		= isset($data[19]) ? str_slug($data[19], " ") : "";
+                $result["title"]	= isset($data[13]) ? ucwords(str_slug($data[13], ["delimiter" => " "])) : "";
+                $result["alt"]		= isset($data[19]) ? str_slug($data[19], ["delimiter" => " "]) : "";
                 $result["url"]		= $data[8];
                 $result["thumb"]	= str_replace('&usqp=CAU', '', $data[4]);
                 $result["filetype"] = self::getFileType($data[8]);
@@ -91,7 +91,7 @@ class GoogleImage
 	}
 
 	public static function getValues($array)
-    {
+	{
     	$result = [];
     	foreach ($array as $key => $value) {
     		if (is_array($value)) {
